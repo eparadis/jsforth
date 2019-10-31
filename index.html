@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Write Yourself a Forth (ex6, compiling)</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div style='display:flex'>
+  <pre id="output"></pre>
+  <div>
+    <button id="run">Run</button>
+    <input id='debug' type='checkbox' >Show <code>DEBUG</code></input>
+  <input id='error' type='checkbox' checked='on'>Show <code>ERROR</code></input>
+  </div>
+  <div>
+    <textarea id="program" rows="10" cols="60">
+: begin immediate 
+ here 
+;
+: while immediate ]
+ compile_next compile_next branch? 
+  compile_next [ 
+  compile_next here 
+  compile_next - 
+  compile_next 1 
+  compile_next + 
+  compile_next ] 
+  compile_next compile_TOS 
+  compile_next [
+;
+: foo 
+ begin 
+  1 - dup 
+  dup print 
+ while
+;
+: bar 
+ 3 foo 
+ 4 foo 
+;
+bar</textarea>
+  </div>
+  <pre id="test_results"></pre>
+</div>
+
+<p>see <a href='http://beza1e1.tuxen.de/articles/forth.html'>here</a>
+
+  <h1>SEE ALSO</h1>
+  <ul>
+    <li><a href='https://skilldrick.github.io/easyforth/'>Easy Forth Tutorial</a<</li>
+  <li><a href='https://raw.githubusercontent.com/nornagon/jonesforth/master/jonesforth.S'>JonesForth (machine code)</a></li>
+    <li><a href='https://raw.githubusercontent.com/nornagon/jonesforth/master/jonesforth.f'>JonesForth (Forth library)</a></li>
+    <li><a href="https://www.sifflez.org/lectures/ASE/C3.pdf">A good explination of JonesForth</a></li>
+    <li><a href="http://angg.twu.net/miniforth-article.html">A mini-FORTH in LUA</a></li>
+    <li><a href='https://www.forth.com/starting-forth/11-forth-compiler-defining-words/#How_to_Control_the_Colon_Compiler'>Compile vs Immediate mode behavior
+  </ul>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>
