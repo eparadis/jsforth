@@ -5,6 +5,11 @@ This was originally written on codepen.io [here](https://codepen.io/eparadis/pen
 
 It was inspired by [this blog post](http://beza1e1.tuxen.de/articles/forth.html)
 
+# BUGS
+
+- I think there's a problem with nested `begin..while`s as they're currently implemented. It might be
+  an issue with `branch?`.
+
 # TODO
 
 - as seen in the `begin..while` example, you have to go through some tortuous abuse of mode switching to
