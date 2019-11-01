@@ -20,13 +20,15 @@ function test_results(msg) {
 }
 
 const starting_immediates = () => ([";", "immediate", "compile_TOS", "[", "compile_next", "return" ]);
-let mode = "";
-let compiling_word = undefined;
-let p_counter = 0;
-let immediates = [];
-let compile_target_addr = 0
-let call_stack = []
-function exercise6(orig_input, stack, heap, incoming_dict, cout) {
+
+function jsforth(orig_input, incoming_dict, cout) {
+  const stack = [], headp = []
+  let compiling_word = undefined;
+  let immediates = starting_immediates();
+  let compile_target_addr = 0
+  let call_stack = []
+  let p_counter = 0;
+  mode = 'immediate'
   cout.debug(`orig_input: ${orig_input}`)
   let program = orig_input.split(/\s/);
   program = program.filter((w)=>(w.length > 0))
@@ -247,10 +249,7 @@ function exercise6(orig_input, stack, heap, incoming_dict, cout) {
 
 function run() {
   clear();
-  const run_stack = [];
-  const run_heap = [];
   const input_text = document.querySelector("#program").value;
-  mode = "immediate";
   p_counter = 0;
   immediates = starting_immediates()
   compiling_word = undefined
@@ -259,7 +258,7 @@ function run() {
     log: g_log,
     debug: g_debug
   };
-  g_log(exercise6(input_text, run_stack, run_heap, {}, c));
+  g_log(jsforth(input_text, {}, c));
 }
 
 // run()
@@ -272,12 +271,6 @@ console.log( (()=>{
 function tests(test_results) {
   let allPass = true
   function expect(input, output) {
-    const run_stack = [];
-    const run_heap = [];
-    mode = "immediate";
-    p_counter = 0;
-    compiling_word = undefined
-    immediates = starting_immediates()
     
     const actual = [];
     const c = {
@@ -287,7 +280,7 @@ function tests(test_results) {
         actual.push(msg);
       }
     };
-    exercise6(input, run_stack, run_heap, {}, c);
+    jsforth(input, {}, c);
     let pass = true
     for(let i=0; i < output.length; i+=1) {
       pass = pass & !!(output[i] == actual[i])
