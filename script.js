@@ -1,4 +1,3 @@
-document.querySelector("#run").addEventListener("click", run);
 function g_log(line) {
   g_write(line + "\n");
 }
@@ -264,9 +263,13 @@ function run() {
 }
 
 // run()
-tests()
+console.log( (()=>{
+  let result = '';
+  return tests((msg)=>{ result += msg}) ? result += ' pass' : result += ' fail'
+})() )
 
-function tests() {
+
+function tests(test_results) {
   let allPass = true
   function expect(input, output) {
     const run_stack = [];
@@ -316,4 +319,5 @@ function tests() {
   } else {
     test_results('FAIL')
   }
+  return allPass
 }
