@@ -21,19 +21,18 @@ function test_results(msg) {
 
 const starting_immediates = () => ([";", "immediate", "compile_TOS", "[", "compile_next", "return" ]);
 
-function jsforth(orig_input, cout) {
-  const stack = [], headp = []
+function jsforth(orig_input, cout, iter_limit) {
+  const stack = []
   let compiling_word = undefined;
-  let immediates = starting_immediates();
+  const immediates = starting_immediates();
   let compile_target_addr = 0
-  let call_stack = []
-  let p_counter = 0;
-  mode = 'immediate'
+  const call_stack = []
+  let p_counter = 0
+  let mode = 'immediate'
   cout.debug(`orig_input: ${orig_input}`)
   let program = orig_input.split(/\s/);
   program = program.filter((w)=>(w.length > 0))
   program.push(undefined) // append a marker that this is the end of the program
-  p_counter = 0
   compile_target_addr = program.length // for now, we just compile to the end of the program... maybe that's bad ???
   const get_next = ()=>{
     p_counter += 1;
@@ -130,7 +129,6 @@ function jsforth(orig_input, cout) {
       compile_word('return')
       cout.debug(`word compiled: ${JSON.stringify(compiling_word)}`);
       cout.debug(program.slice(compiling_word.addr))
-      const body = compiling_word.body;
       // get the start of the word we just compiled (see the def of ':')
       const start_addr = compiling_word.addr
       dict[compiling_word.name] = () => {
@@ -203,9 +201,12 @@ function jsforth(orig_input, cout) {
     compile_target_addr += 1
   }
   let next = program[0]
-  let iter_limit = 200
+
   while (next !== undefined && iter_limit > 0) {
     iter_limit-=1
+    if(iter_limit === 0) {
+      return "iteration limit hit!"
+    }
     cout.debug(
       `pc:${p_counter} ${
         mode == "compiling" ? "c" : "i"
@@ -237,9 +238,6 @@ function jsforth(orig_input, cout) {
     }
     next = get_next();
   }
-  if(iter_limit === 0) {
-    return "iteration limit hit!"
-  }
   return "ok";
 }
 
@@ -254,7 +252,7 @@ function run() {
     log: g_log,
     debug: g_debug
   };
-  g_log(jsforth(input_text, c));
+  g_log(jsforth(input_text, c, 200));
 }
 
 // run()
@@ -276,7 +274,7 @@ function tests(test_results) {
         actual.push(msg);
       }
     };
-    jsforth(input, c);
+    jsforth(input, c, 200);
     let pass = true
     for(let i=0; i < output.length; i+=1) {
       pass = pass & !!(output[i] == actual[i])
