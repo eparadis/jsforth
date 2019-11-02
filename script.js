@@ -15,9 +15,6 @@ function g_debug(msg) {
 function g_error(msg) {
   g_log(`ERROR: ${msg}`);
 }
-function test_results(msg) {
-  document.getElementById("test_results").innerText += msg
-}
 
 const starting_immediates = () => ([";", "immediate", "compile_TOS", "[", "compile_next", "return" ]);
 
@@ -244,9 +241,6 @@ function jsforth(orig_input, cout, iter_limit) {
 function run() {
   clear();
   const input_text = document.querySelector("#program").value;
-  p_counter = 0;
-  immediates = starting_immediates()
-  compiling_word = undefined
   const c = {
     error: g_error,
     log: g_log,
