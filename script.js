@@ -11,8 +11,7 @@ function jsforth(orig_input, cout, iter_limit) {
   let p_counter = 0
   let mode = 'immediate'
   cout.debug(`orig_input: ${orig_input}`)
-  let program = orig_input.split(/\s/);
-  program = program.filter((w)=>(w.length > 0))
+  const program = orig_input.split(/\s/).filter((w)=>(w.length > 0))
   program.push(undefined) // append a marker that this is the end of the program
   compile_target_addr = program.length // for now, we just compile to the end of the program... maybe that's bad ???
   const get_next = ()=>{
