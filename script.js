@@ -1,20 +1,4 @@
-function g_log(line) {
-  g_write(line + "\n");
-}
-function g_write(text) {
-  document.getElementById("output").innerText += text;
-}
-function clear() {
-  document.getElementById("output").innerText = "";
-}
-function g_debug(msg) {
-  if (document.getElementById("debug").checked) {
-    g_log(`DEBUG: ${msg}`);
-  }
-}
-function g_error(msg) {
-  g_log(`ERROR: ${msg}`);
-}
+
 
 const starting_immediates = () => ([";", "immediate", "compile_TOS", "[", "compile_next", "return" ]);
 
@@ -239,6 +223,23 @@ function jsforth(orig_input, cout, iter_limit) {
 }
 
 function run() {
+  function g_log(line) {
+    g_write(line + "\n");
+  }
+  function g_write(text) {
+    document.getElementById("output").innerText += text;
+  }
+  function clear() {
+    document.getElementById("output").innerText = "";
+  }
+  function g_debug(msg) {
+    if (document.getElementById("debug").checked) {
+      g_log(`DEBUG: ${msg}`);
+    }
+  }
+  function g_error(msg) {
+    g_log(`ERROR: ${msg}`);
+  }
   clear();
   const input_text = document.querySelector("#program").value;
   const c = {
