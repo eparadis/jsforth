@@ -21,7 +21,7 @@ function test_results(msg) {
 
 const starting_immediates = () => ([";", "immediate", "compile_TOS", "[", "compile_next", "return" ]);
 
-function jsforth(orig_input, incoming_dict, cout) {
+function jsforth(orig_input, cout) {
   const stack = [], headp = []
   let compiling_word = undefined;
   let immediates = starting_immediates();
@@ -133,7 +133,7 @@ function jsforth(orig_input, incoming_dict, cout) {
       const body = compiling_word.body;
       // get the start of the word we just compiled (see the def of ':')
       const start_addr = compiling_word.addr
-      incoming_dict[compiling_word.name] = () => {
+      dict[compiling_word.name] = () => {
         // calling a new word should jump to the word
         // so we need to push the current address on the return stack so we can get back
         call_stack.push(p_counter) // 'return' assumes this will always be a program-space address
@@ -194,11 +194,7 @@ function jsforth(orig_input, incoming_dict, cout) {
       p_counter = ret_addr
     }
   };
-  for (var key in dict) {
-    if (incoming_dict[key] === undefined) {
-      incoming_dict[key] = dict[key];
-    }
-  }
+
   function compile_word(word) {
     const trimmed_word = word.toString().trim() // just in case (?)
     // put word at the current compiling target address
@@ -218,17 +214,17 @@ function jsforth(orig_input, incoming_dict, cout) {
     if (mode === "compiling") {
       if (immediates.includes(next)) {
         // cout.debug(`found immeidate word ${next}`)
-        if (incoming_dict[next] === undefined) {
+        if (dict[next] === undefined) {
           cout.error(`dict[next] is undefined. next is ${next}`);
         }
-        incoming_dict[next]();
+        dict[next]();
       } else {
         // cout.debug(program)
         compile_word(next);
       }
     } else {
-      if (incoming_dict[next] !== undefined) {
-        if (incoming_dict[next]() === -1) {
+      if (dict[next] !== undefined) {
+        if (dict[next]() === -1) {
           cout.debug(program)
           return "fail";
         }
@@ -258,7 +254,7 @@ function run() {
     log: g_log,
     debug: g_debug
   };
-  g_log(jsforth(input_text, {}, c));
+  g_log(jsforth(input_text, c));
 }
 
 // run()
@@ -280,7 +276,7 @@ function tests(test_results) {
         actual.push(msg);
       }
     };
-    jsforth(input, {}, c);
+    jsforth(input, c);
     let pass = true
     for(let i=0; i < output.length; i+=1) {
       pass = pass & !!(output[i] == actual[i])
